@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>辅助选课系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* ---------- 主题变量 ---------- */
+    :root {
+      --bg-color: #f0f2f5; /* 背景色 */
+      --card-bg: #ffffffcc; /* 卡片背景色 */
+      --text-color: #2c3e50;/* 文本颜色 */
+      --accent: #0a84ff;/* 主要颜色 */
+      --shadow: rgba(0,0,0,0.1);/* 阴影 */
+      --font: "Segoe UI Variable","Segoe UI","Helvetica Neue",Arial,sans-serif;
+    }
+    .dark {
+      --bg-color: #1e1e1e;
+      --card-bg: #2a2a2acc;
+      --text-color: #e5e5e5;
+      --accent: #0a84ff;
+      --shadow: rgba(0,0,0,0.5);
+    }
+    .blue-theme { 
+      --bg-color: linear-gradient(135deg, #56cbf292 0%, #2f81edbe 100%);
+      --card-bg:  #e3f2fd; 
+      --text-color: #333; 
+      --accent: #2196f3; 
+      --shadow: rgba(0,0,0,0.1); 
+    }
+    .green-theme { 
+      --bg-color: linear-gradient(135deg, #a1ffcec0 0%, #eefa92d7 100%);
+      --card-bg:  #e8f5e9 ; 
+      --text-color: #333; 
+      --accent: #4caf50; 
+      --shadow: rgba(0,0,0,0.1); 
+    }
+    .purple-theme { 
+      --bg-color: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+      --card-bg:  #f3e5f5; 
+      --text-color: #333; 
+      --accent: #9c27b0; 
+      --shadow: rgba(0,0,0,0.1); 
+    }
+
+    /* ---------- 全局 ---------- */
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin: 0; padding: 20px;
+      transition: background 0.3s, color 0.3s;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    h2, h3 { margin: 0 0 10px; }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    button {
+      font-family: var(--font);
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    button:hover { background: shade(var(--accent), 0.9); transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    button.delete-btn {
+      background: transparent;
+      color: #e74856;      /* 红色警告色 */
+      border: 1px solid #e74856;
+      border-radius: 6px;
+      padding: 8px 16px;
+      transition: background 0.2s, color 0.2s;
+    }
+    button.delete-btn:hover {
+      background: rgba(231,72,86,0.1);
+    }
+
+
+    input {
+      font-family: var(--font);
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--accent); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+    th { background: var(--card-bg); }
+    tr:hover td { background: #f9f9f9; }
+
+    textarea {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      resize: vertical;
+      font-family: var(--font);
+    }
+
+    /* ---------- 全局：链接样式 ---------- */
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    a:hover {
+      color: var(--text-color);
+    }
+    a:active {
+      color: var(--shadow);
+    }
+
+    /* ---------- 主题切换区 ---------- */
+    .theme-toggle {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .theme-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: var(--card-bg);
+      box-shadow: 0 4px 12px var(--shadow);
+      transition: box-shadow 0.3s, transform 0.2s;
+    }
+    .theme-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px var(--shadow); }
+
+    /* ---------- 登录居中 ---------- */
+    .login-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 40px);
+    }
+
+    /* ---------- footer ---------- */
+    footer {
+      position: sticky;
+      bottom: 20px;
+      left: auto;
+      transform: none;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 12px;
+      box-shadow: 0 -4px 12px var(--shadow);
+      text-align: center;
+      font-size: 0.9em;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------- Modal 样式 ---------- */
+    .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px var(--shadow);
+    width: 400px;
+    max-width: 90%;
+    padding: 20px;
+    animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+    .modal-header h3 {
+    margin: 0;
+    }
+
+    .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: var(--text-color);
+    }
+
+    .modal-body { margin-top: 10px; }
+
+    .modal-footer { margin-top: 20px; text-align: right; }
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 操作引导模态框 */
+    #guide-modal.guide-modal-overlay {
+      position: fixed; top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 10000;
+    }
+    #guide-modal.guide-modal-overlay.active {
+      display: flex;
+    }
+    .guide-modal {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      width: 400px; max-width: 90%; padding: 20px;
+      animation: guide-fadeIn 0.2s ease-out;
+      font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+      color: var(--text-color);
+    }
+    .guide-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .guide-modal-close {
+      background: transparent; border: none; font-size: 1.2em;
+      cursor: pointer; 
+      color: var(--text-color);
+    }
+    .guide-modal-body {
+      margin-top: 10px;
+    }
+    .guide-modal-footer {
+      margin-top: 20px; text-align: right;
+    }
+    .guide-btn {
+      padding: 6px 12px; margin-left: 8px;
+      border: none; border-radius: 6px; cursor: pointer;
+    }
+    .guide-prevBtn {
+      background: #ccc;
+    }
+    .guide-nextBtn {
+      background: var(--accent); color: #fff;
+    }
+    @keyframes guide-fadeIn {
+      from { opacity:0; transform: translateY(-10px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* Q&A 模态框 */
+    #qa-modal.qa-modal-overlay {
+      position: fixed; top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 10001;
+    }
+    #qa-modal.qa-modal-overlay.active {
+      display: flex;
+    }
+    .qa-modal {
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 450px; max-width: 90%; padding: 20px;
+      animation: qa-fadeIn 0.2s ease-out;
+      font-family: "Segoe UI","Helvetica Neue",Arial,sans-serif;
+      color: var(--text-color);
+    }
+    .qa-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .qa-modal-close {
+      background: transparent; border: none; font-size: 1.3em;
+      cursor: pointer; 
+      color: var(--text-color);
+    }
+    .qa-modal-body {
+      margin-top: 12px; line-height: 1.5;
+    }
+    .qa-modal-footer {
+      margin-top: 20px; text-align: right;
+    }
+    .qa-btn {
+      padding: 6px 14px; margin-left: 8px;
+      border: none; border-radius: 5px; cursor: pointer;
+      font-size: 0.9em;
+    }
+    .qa-prevBtn {
+      background: #ccc; 
+      color: #333;
+    }
+    .qa-nextBtn {
+      background: var(--accent); 
+      color: var(--text-color);
+    }
+    @keyframes qa-fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+
+    /* ---------- 滚动条 ---------- */
+    ::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 6px;
+      border: 3px solid transparent;
+      background-clip: content-box;
+    }
+    ::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+    ::-webkit-scrollbar-corner { background: transparent; }
+  </style>
+</head>
+<body>
+  <!-- 主题切换 -->
+  <div class="theme-toggle">
+    <div class="theme-btn" id="lightBtn">☀️</div>
+    <div class="theme-btn" id="darkBtn">🌙</div>
+    <div class="theme-btn" id="blueBtn">🌊</div>
+    <div class="theme-btn" id="greenBtn">🍃</div>
+    <div class="theme-btn" id="purpleBtn">🍇</div>
+  </div>
+
+  <!-- 操作引导模态框 -->
+  <div id="guide-modal" class="guide-modal-overlay">
+    <div class="guide-modal">
+      <div class="guide-modal-header">
+        <h3>Tongji-Electcourse2使用指南</h3>
+        <button id="guide-closeBtn" class="guide-modal-close">×</button>
+      </div>
+      <div id="guide-content" class="guide-modal-body">
+        <!-- 文本由 JS 填充 -->
+      </div>
+      <div class="guide-modal-footer">
+        <button id="guide-prevBtn" class="guide-btn guide-prevBtn">上一步</button>
+        <button id="guide-nextBtn" class="guide-btn guide-nextBtn">下一步</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q&A 模态框结构 -->
+  <div id="qa-modal" class="qa-modal-overlay">
+    <div class="qa-modal">
+      <div class="qa-modal-header">
+        <h3>Q&A</h3>
+        <button id="qa-closeBtn" class="qa-modal-close">×</button>
+      </div>
+      <div id="qa-content" class="qa-modal-body">
+        <!-- 由 JS 填充 -->
+      </div>
+      <div class="qa-modal-footer">
+        <button id="qa-prevBtn" class="qa-btn qa-prevBtn">上一个</button>
+        <button id="qa-nextBtn" class="qa-btn qa-nextBtn">下一个</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 登录界面 -->
+  
+  <div id="login" class="login-wrapper">
+    <div class="card" style="max-width:360px; width:100%;">
+      <h2>登录</h2>
+      <div style="margin-top:10px;">
+        <label>学号：</label><br>
+        <input id="username" type="text" style="width:100%;"><br><br>
+        <label>密码：</label><br>
+        <input id="password" type="password" style="width:100%;"><br><br>
+        <label><input type="checkbox" id="agree" /> 我已同意 <a href="UI_v1/user_agreement.html">用户守则</a>
+          <a href="javascript:void(0)" id="guide-showLink">使用指南</a>
+          <a href="javascript:void(0)" id="qa-showLink">Q&A</a>
+          </label> <br><br> <!-- <a href="UI_v1/demo.html">使用指南</a> -->
+        <button style="width:100%;" onclick="login()">登录</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主界面 -->
+  <div id="main" style="display:none;">
+    <div class="card">
+      <div style="display:flex; justify-content: space-between; align-items: center;">
+        <h2>选课任务管理</h2>
+        <button onclick="viewLogin()" style="background:transparent; color:var(--accent); box-shadow:none; padding:4px 8px;">查看登录信息</button>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div>
+          <label>课程编号：</label><br>
+          <input id="course_no" type="text">
+        </div>
+        <div>
+          <label>最大重试次数：</label><br>
+          <input id="max_retry" type="number" value="10000" min="1" style="width:60px">
+        </div>
+        <div style="align-self:flex-end;">
+          <button onclick="addTask()">添加任务</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>课程编号</th>
+            <th>最大重试</th>
+            <th>状态</th>
+            <th>操作</th>
+            <th>删除</th>        <!-- 删除任务 -->
+          </tr>
+        </thead>
+        <tbody id="tasks_body"></tbody>
+      </table>
+
+      <h3 style="margin-top:20px;">日志输出</h3>
+      <textarea id="log_area" rows="8" readonly></textarea>
+    </div>
+  </div>
+
+  <!--错误信息弹窗 -->
+  <!-- 放在<body>底部，使用公用的 .modal-overlay/.modal 样式 -->
+  <div id="modal-error" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Tongji-Electcourse2</h3>
+        <button class="modal-close" onclick="hideErrorModal()">×</button>
+      </div>
+      <div class="modal-body" id="modal-error-body">
+        <!-- 错误信息由 JS 填充 -->
+      </div>
+      <div class="modal-footer">
+        <button onclick="hideErrorModal()">确定</button>
+      </div>
+    </div>
+  </div>
+  <!-- 确认信息弹窗 -->
+  <!-- 放在<body>底部，与 error Modal 平级 -->
+  <div id="modal-confirm" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Tongji-Electcourse2</h3>
+        <button class="modal-close" onclick="hideConfirmModal(false)">×</button>
+      </div>
+      <div class="modal-body" id="modal-confirm-body">
+        <!-- 文本由 JS 填充 -->
+      </div>
+      <div class="modal-footer">
+        <button onclick="hideConfirmModal(false)">取消</button>
+        <button onclick="hideConfirmModal(true)">确定</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- footer -->
+  <footer>
+    项目地址：<a href="https://github.com/boatchanting/Tongji-Electcourse2" target="_blank">GitHub</a>
+    <a href="https://kkgithub.com/boatchanting/Tongji-Electcourse2" target="_blank">GitHub镜像</a><br>
+    反馈问题：<a href="https://github.com/boatchanting/Tongji-Electcourse2/issues" target="_blank">Issues</a>
+  </footer>
+
+<script>
+// ---------- 主题逻辑 ----------
+function setTheme(theme) {
+  document.body.className = theme;
+  localStorage.setItem('theme', theme);
+}
+function checkTimeTheme() {
+  const h = new Date().getHours();
+  return (h>=6 && h<18) ? '' : 'dark';
+}
+document.getElementById('lightBtn').onclick = ()=> setTheme('');
+document.getElementById('darkBtn').onclick = ()=> setTheme('dark');
+document.getElementById('blueBtn').onclick = ()=> setTheme('blue-theme');
+document.getElementById('greenBtn').onclick = ()=> setTheme('green-theme');
+document.getElementById('purpleBtn').onclick = ()=> setTheme('purple-theme');
+setTheme(localStorage.getItem('theme') || checkTimeTheme());
+</script>
+<script>
+// ---------- 操作引导 ----------
+document.addEventListener('DOMContentLoaded', () => {
+const guideContentArr = [
+  "步骤1: 请授权1系统学号和密码以登录系统，便于后续软件<strong>自动</strong>进行1系统的登录和选课操作。",
+"步骤2: 登录后，输入课程编号和最大重试次数，点击添加任务。",
+"步骤3: 点击“开始”按钮来启动任务，点击“停止”来关闭任务。",
+"步骤4: 查看选课日志，了解每次选课尝试的结果。",
+"步骤5: 完成选课后，您可以查看任务的状态，删除不需要的任务。",
+"点击界面上方的五个小按钮以切换主题。",
+"您已了解所有操作，Tongji-electcourse2 祝您选课愉快！"
+];
+let guideStep = 0;
+
+const guideModal    = document.getElementById('guide-modal');
+const guideShowLink = document.getElementById('guide-showLink');
+const guideCloseBtn = document.getElementById('guide-closeBtn');
+const guidePrevBtn  = document.getElementById('guide-prevBtn');
+const guideNextBtn  = document.getElementById('guide-nextBtn');
+const guideContent  = document.getElementById('guide-content');
+
+function guideUpdateButtons() {
+  guidePrevBtn.style.display = guideStep === 0 ? 'none' : 'inline-block';
+  guideNextBtn.textContent = guideStep === guideContentArr.length - 1 
+    ? '完成' 
+    : '下一步';
+}
+
+function guideRenderStep() {
+  guideContent.innerHTML = `<p>${guideContentArr[guideStep]}</p>`;
+  guideUpdateButtons();
+}
+
+window.guideOpen = () => {
+  guideStep = 0;
+  guideRenderStep();
+  guideModal.classList.add('active');
+};
+
+window.guideClose = () => {
+  guideModal.classList.remove('active');
+};
+
+window.guideNext = () => {
+  if (guideStep < guideContentArr.length - 1) {
+    guideStep++;
+    guideRenderStep();
+  } else {
+    guideClose();
+  }
+};
+
+window.guidePrev = () => {
+  if (guideStep > 0) {
+    guideStep--;
+    guideRenderStep();
+  }
+};
+
+guideShowLink.addEventListener('click', guideOpen);
+guideCloseBtn.addEventListener('click', guideClose);
+guideNextBtn.addEventListener('click', guideNext);
+guidePrevBtn.addEventListener('click', guidePrev);
+});     
+
+</script>
+<script>
+
+// ----------------------------------
+// ---------- 与后端交互 -------------
+// ----------------------------------
+let currentLogTask = null, logTimer = null;
+
+// 显示错误 Modal
+function showErrorModal(msg) {
+  document.getElementById('modal-error-body').textContent = msg;
+  document.getElementById('modal-error').classList.add('active');
+}
+// 隐藏错误 Modal
+function hideErrorModal() {
+  document.getElementById('modal-error').classList.remove('active');
+}
+
+// 登录函数
+async function login() {
+  if (!document.getElementById('agree').checked) {
+    showErrorModal('请先同意用户守则');
+    return;
+  }
+  const u = document.getElementById('username').value;
+  const p = document.getElementById('password').value;
+  const success = await window.pywebview.api.login(u, p);
+  if (success) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    refreshTasks();
+  } else {
+    showErrorModal('登录失败，请检查用户名或密码');
+  }
+}
+
+function viewLogin() {
+  clearInterval(logTimer);
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+}
+
+async function addTask() {
+  const c = document.getElementById('course_no').value;
+  const r = document.getElementById('max_retry').value;
+  if (!c) return showErrorModal('请输入课程编号');
+  await window.pywebview.api.add_task(c,r);
+  refreshTasks();
+}
+
+async function startTask(id) {
+  await window.pywebview.api.start_task(id); refreshTasks();
+}
+async function stopTask(id) {
+  await window.pywebview.api.stop_task(id); refreshTasks();
+}
+
+async function refreshTasks() {
+const tasks = await window.pywebview.api.get_tasks();
+const tb = document.getElementById('tasks_body');
+tb.innerHTML = '';
+tasks.forEach(t => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${t.course_number}</td>
+    <td>${t.max_retries}</td>
+    <td>${t.status}</td>
+    <td>
+      <button onclick="startTask('${t.id}')">开始</button>
+      <button onclick="stopTask('${t.id}')">停止</button>
+      <button onclick="showLogs('${t.id}')">日志</button>
+    </td>
+    <td>
+      <button class="delete-btn" onclick="deleteTask('${t.id}')">删除</button>
+    </td>
+  `;
+  tb.appendChild(tr);
+});
+}
+
+// 服务于 deleteTask 函数，显示确认弹窗
+// 弹窗 Promise 化，msg 为提示内容
+function showConfirmModal(msg) {
+  return new Promise(resolve => {
+    document.getElementById('modal-confirm-body').textContent = msg;
+    const modal = document.getElementById('modal-confirm');
+    modal.classList.add('active');
+
+    // 绑定一次性回调
+    window._confirmResolve = result => {
+      resolve(result);
+      delete window._confirmResolve;
+    };
+  });
+}
+// 服务于 deleteTask 函数，隐藏弹窗
+function hideConfirmModal(result) {
+  document.getElementById('modal-confirm').classList.remove('active');
+  // 调用 resolve
+  if (window._confirmResolve) window._confirmResolve(result);
+}
+
+// deleteTask 函数, 调用 showConfirmModal 确认删除
+async function deleteTask(id) { // 删除任务
+  if (await showConfirmModal('确定要删除这个任务吗？')) {
+    await window.pywebview.api.delete_task(id);
+    // 如果当前在看该任务日志，停止轮询
+    if (currentLogTask === id) {
+      clearInterval(logTimer);
+      currentLogTask = null;
+      document.getElementById('log_area').value = '';
+    }
+    refreshTasks();
+  }
+}
+
+function showLogs(tid) {
+  currentLogTask = tid; document.getElementById('log_area').value = '';
+  if (logTimer) clearInterval(logTimer);
+  logTimer = setInterval(async ()=>{
+    const lines = await window.pywebview.api.get_logs(currentLogTask);
+    if (lines.length) {
+      const area = document.getElementById('log_area');
+      lines.forEach(l=> area.value += l + '\n');
+      area.scrollTop = area.scrollHeight;
+    }
+  }, 500);
+}
+</script>
+
+<script>
+// ---------- Q&A 逻辑 ---------- 
+document.addEventListener('DOMContentLoaded', () => {
+  // Q&A 数据
+  const qaContentArr = [
+    {
+      q: "1. 这个程序只是代替鼠标进行点击操作吗？",
+      a: "是的，但是其可以自动运行并支持后台运行，并有实时展示以及所有过程的日志信息，想去干什么事情都是可以滴~"
+    },
+    {
+      q: "2. 会不会导致信息泄露？",
+      a: "不会，本程序完全本地运行，信息仅用于选课系统的身份验证，并不会上传您的信息。如果您对此不放心的话，也可以查看源代码或自行根据源代码运行本程序。"
+    },
+    {
+      q: "3. 可以同时选择多门课程吗？",
+      a: "当然可以！您可以添加多个任务，每个任务对应一门课程。程序对每个任务进行独立的操作，不会相互干扰。"
+    },
+    {
+      q: "4. 如何确保程序的稳定性？",
+      a: "程序经过多次测试，确保在大多数情况下能够稳定运行。如果遇到问题，可以通过查看日志信息定位问题，或者提交 Issues 寻求帮助。"
+    },
+    {
+      q: "5. 是否需要安装额外的浏览器驱动？",
+      a: "默认情况下，程序使用 Edge 浏览器。如果系统未自带 Edge WebDriver，您需要手动安装并配置环境变量。具体步骤请参考 Edge WebDriver 下载页面。"
+    },
+    {
+      q: "6. 如何更新到最新版本？",
+      a: "您可以直接从 Releases 页面下载最新版本的可执行文件，或者通过 Git 拉取最新代码并自行构建：<br><code>git pull origin main</code>"
+    },
+  ];
+
+  let qaStep = 0;
+  const qaModal     = document.getElementById('qa-modal');
+  const qaShowLink  = document.getElementById('qa-showLink');
+  const qaCloseBtn  = document.getElementById('qa-closeBtn');
+  const qaPrevBtn   = document.getElementById('qa-prevBtn');
+  const qaNextBtn   = document.getElementById('qa-nextBtn');
+  const qaContent   = document.getElementById('qa-content');
+
+  function qaUpdateButtons() {
+    // 第一步隐藏“上一个”
+    qaPrevBtn.style.display = qaStep === 0 ? 'none' : 'inline-block';
+    // 最后一步按钮文字改为“完成”，否则“下一个”
+    qaNextBtn.textContent = qaStep === qaContentArr.length - 1 ? '完成' : '下一个';
+  }
+
+  function qaRenderStep() {
+    const item = qaContentArr[qaStep];
+    qaContent.innerHTML = `<h4>${item.q}</h4><p>${item.a}</p>`;
+    qaUpdateButtons();
+  }
+
+  window.qaOpen = () => {
+    qaStep = 0;
+    qaRenderStep();
+    qaModal.classList.add('active');
+  };
+  window.qaClose = () => {
+    qaModal.classList.remove('active');
+  };
+  window.qaNext = () => {
+    if (qaStep < qaContentArr.length - 1) {
+      qaStep++;
+      qaRenderStep();
+    } else {
+      qaClose();
+    }
+  };
+  window.qaPrev = () => {
+    if (qaStep > 0) {
+      qaStep--;
+      qaRenderStep();
+    }
+  };
+
+  // 绑定事件
+  qaShowLink.addEventListener('click', qaOpen);
+  qaCloseBtn.addEventListener('click', qaClose);
+  qaNextBtn.addEventListener('click', qaNext);
+  qaPrevBtn.addEventListener('click', qaPrev);
+});
+</script>
+
+</body>
+</html>

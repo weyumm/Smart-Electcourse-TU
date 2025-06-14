@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户守则</title>
+    <link rel="stylesheet" href="styles/theme.css"/><!-- 主题样式 -->
+    <link rel="stylesheet" href="styles/link.css"/><!-- 链接样式 -->
+    <link rel="stylesheet" href="styles/scrollbar.css"/><!-- 滚动条样式 -->
+    <style>
+        /* 全局样式 */
+        * { box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0; padding: 20px;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            }
+
+        /* 卡片样式 */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        /* 标题样式 */
+        h1 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* 按钮样式 */
+        button {
+            font-family: var(--font);
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin: 5px;
+        }
+        button:hover { 
+            background: color-mix(in srgb, var(--accent) 90%, #000); 
+            transform: translateY(-1px);
+        }
+        button:active { transform: translateY(0); }
+
+        /* 内容样式 */
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        ol {
+            list-style: decimal inside;
+            padding-left: 20px;
+        }
+        li {
+            margin: 1rem 0;
+        }
+        strong {
+            color: var(--accent);
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle">
+        <button class="theme-btn" id="lightBtn">☀️</button>
+        <button class="theme-btn" id="darkBtn">🌙</button>
+        <button class="theme-btn" id="blueBtn">🌊</button>
+        <button class="theme-btn" id="greenBtn">🍃</button>
+        <button class="theme-btn" id="purpleBtn">🎨</button>
+    </div>
+
+    <div class="content">
+        <div class="card">
+            <h1 data-lang="title">用户守则</h1>
+            
+            <div class="lang-switch" style="text-align: center; margin: 1.5rem 0;">
+                <button class="lang-btn" onclick="changeLang('zh')">中文</button>
+                <button class="lang-btn" onclick="changeLang('en')">English</button>
+            </div>
+
+            <div id="content">
+                <p data-lang="welcome" style="text-align: center">欢迎使用<strong>Tongji-electcourse2</strong>（以下简称“本程序”），请勿用于非法用途，仅供学习交流使用</p>
+                
+                <ol>
+                    <li data-lang="rule1">本程序仅供<strong>学习和交流</strong>使用，请勿用于<strong>非法用途</strong>。</li>
+                    <li data-lang="rule2">在使用过程中，所有的操作和行为都运行在您的<strong>本地环境</strong>中，我们不会收集、存储或上传任何个人信息。</li>
+                    <li data-lang="rule3">用户在使用本程序时，应<strong>自行承担</strong>由此产生的一切后果和责任。</li>
+                    <li data-lang="rule4">本程序不提供任何形式的担保，包括但不限于对程序的适用性、准确性和完整性的担保。</li>
+                    <li data-lang="rule5">本程序的开发者和分发者不承担因使用本程序而引起的任何直接或间接损失和责任。</li>
+                    <li data-lang="rule6">用户在使用本程序时，应遵守当地法律法规，不得利用本程序从事任何违法活动。</li>
+                    <li data-lang="rule7">本程序中的任何更新、修改或终止，开发者有权不事先通知用户。</li>
+                    <li data-lang="rule8">用户使用本程序即表示同意上述所有条款。</li>
+                </ol>
+            </div>
+        </div>
+
+        <footer>
+            <p data-lang="footer">Copyright © 2025 Tongji-electcourse2</p>
+            <p><a href="javascript:history.back()">返回登录界面</a> <a href="version.html">版本信息</a></p>
+            
+        </footer>
+    </div>
+
+<script src="scripts/theme.js"></script><!-- 主题逻辑 -->
+<script>
+
+const langData = {
+    'zh': {
+        title: '用户守则',
+        welcome: '欢迎使用<strong>Tongji-electcourse2</strong>（以下简称“本程序”），请勿用于非法用途，仅供学习交流使用',
+        rule1: '本程序仅供学习和交流使用，请勿用于非法用途。',
+        rule2: '在使用过程中，所有的操作和行为都运行在您的本地环境中，我们不会收集、存储或上传任何个人信息。',
+        rule3: '用户在使用本程序时，应自行承担由此产生的一切后果和责任。',
+        rule4: '本程序不提供任何形式的担保，包括但不限于对程序的适用性、准确性和完整性的担保。',
+        rule5: '本程序的开发者和分发者不承担因使用本程序而引起的任何直接或间接损失和责任。',
+        rule6: '用户在使用本程序时，应遵守当地法律法规，不得利用本程序从事任何违法活动。',
+        rule7: '本程序中的任何更新、修改或终止，开发者有权不事先通知用户。',
+        rule8: '用户使用本程序即表示同意上述所有条款。',
+        footer: 'Copyright © 2025 Tongji-electcourse2'
+    },
+    'en': {
+        title: 'User Agreement',
+        welcome: 'Welcome to <strong>Tongji-electcourse2</strong> (hereinafter referred to as "this program"). Please do not use it for illegal purposes. It is only for learning and communication.',
+        rule1: 'This program is only for learning and communication purposes. Please do not use it for illegal activities.',
+        rule2: 'During use, all operations and behaviors run in your local environment. We will not collect, store or upload any personal information.',
+        rule3: 'Users shall bear all consequences and responsibilities arising from the use of this program.',
+        rule4: 'This program does not provide any form of warranty, including but not limited to the applicability, accuracy and completeness of the program.',
+        rule5: 'The developers and distributors of this program shall not be liable for any direct or indirect losses and responsibilities caused by the use of this program.',
+        rule6: 'Users should comply with local laws and regulations when using this program and shall not use it for any illegal activities.',
+        rule7: 'The developer reserves the right to update, modify or terminate this program without prior notice to users.',
+        rule8: 'By using this program, you agree to all the terms and conditions above.',
+        footer: 'Copyright © 2025 Tongji-electcourse2'
+    }
+};
+
+function changeLang(lang) {
+    document.querySelectorAll('[data-lang]').forEach(element => {
+        const key = element.getAttribute('data-lang');
+        element.innerHTML = langData[lang][key];
+    });
+}
+
+// 默认加载中文
+document.addEventListener('DOMContentLoaded', () => {
+    changeLang('zh');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+  name="viewport"
+  content="width=device-width,initial-scale=1.0,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+  <title>Tongji‑Electcourse2 | 软件介绍</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 公共样式 -->
+  <link rel="stylesheet" href="styles/theme.css" />
+  <link rel="stylesheet" href="styles/link.css" />
+  <style>
+    /* =============== 全局 =============== */
+    :root {
+      /* 允许快速调整主色调渐变 */
+      --grad-start: var(--accent);
+      --grad-end: #8d4dff;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    body {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* =============== 顶部主题切换 =============== */
+    .theme-toggle {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 24px 0 0;
+      animation: fadeInUp 0.6s ease-out 0.1s both;
+    }
+    .theme-btn { cursor: pointer; font-size: 1.35rem; line-height: 1; }
+
+    /* =============== Hero =============== */
+    .hero {
+      text-align: center;
+      padding: 140px 20px 100px;
+      background: radial-gradient(100% 140% at 50% 0%, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 60%),
+                  linear-gradient(135deg, rgba(0, 120, 215, 0.18) 0%, rgba(180, 80, 255, 0.18) 100%),
+                  var(--card-bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      filter: blur(60px);
+      z-index: 0;
+      pointer-events: none;
+      animation: float 14s ease-in-out infinite;
+    }
+    .hero::before { top: -200px; left: -200px; }
+    .hero::after  { bottom: -200px; right: -150px; animation-delay: -5s; }
+    @keyframes float {
+      0%,100% { transform: translateY(0) translateX(0); }
+      50%      { transform: translateY(40px) translateX(20px); }
+    }
+
+    .hero-content { position: relative; z-index: 1; animation: fadeInUp 0.8s ease-out 0.2s both; }
+    .hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      margin: 0 0 16px;
+      background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      max-width: 620px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .hero button {
+      padding: 14px 32px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%);
+      color: #fff;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.1s;
+    }
+    .hero button:hover { filter: brightness(1.1); transform: translateY(-3px); }
+    .hero button:active { transform: translateY(0); }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap; /* 允许换行以适应小屏幕 */
+      justify-content: center;
+      gap: 16px; /* 按钮之间的间距 */
+      margin-top: 24px;
+    }
+
+    .button-group button {
+      padding: 14px 24px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%);
+      color: #fff;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.1s;
+      min-width: 130px;
+      text-align: center;
+    }
+
+    /* 波浪分隔 */
+    .wave {
+      position: relative;
+      height: 80px;
+      margin-top: -80px; /* 与 hero 重叠 */
+      overflow: hidden;
+    }
+    .wave svg { display: block; width: 200%; height: 100%; }
+
+    /* =============== Features =============== */
+    .features {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      padding: 80px 20px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 32px 24px;
+      box-shadow: 0 6px 20px var(--shadow);
+      backdrop-filter: blur(8px);
+      text-align: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-6px) rotateX(4deg) rotateY(-3deg);
+      box-shadow: 0 12px 36px var(--shadow);
+    }
+    .feature-icon {
+      font-size: 2.6rem;
+      margin-bottom: 14px;
+      /* background: linear-gradient(90deg, var(--grad-start) 0%, var(--grad-end) 100%);
+      background-clip: text;
+      -webkit-text-fill-color: transparent; */
+    }
+    .feature-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; }
+    .feature-desc  { font-size: 0.95rem; line-height: 1.6; }
+
+    /* 手机端适配 */
+    @media (max-width: 768px) {
+      .features {
+        padding: 40px 16px; /* 减小上下和左右内边距 */
+        margin: 0 -16px;    /* 抵消 body 的 padding，避免留白 */
+        width: calc(100% + 32px); /* 补偿 margin 的负值，保持视觉居中 */
+        max-width: none;    /* 移除最大宽度限制，让内容撑满屏幕 */
+      }
+
+      .feature-card {
+        border-radius: 12px; /* 可选：减小圆角，更适合移动端 */
+        padding: 24px 16px;  /* 可选：调整内边距 */
+      }
+    }
+
+    /* =============== 概述 =============== */
+    .overview {
+      max-width: 920px;
+      margin: 60px auto 100px;
+      padding: 50px 40px;
+      background: var(--card-bg);
+      border-left: 6px solid var(--accent);
+      border-radius: 14px;
+      box-shadow: 0 6px 20px var(--shadow);
+      animation: fadeInUp 0.8s ease-out 0.6s both;
+    }
+    .overview h2 { margin-top: 0; font-size: 1.6rem; }
+    .overview p  { line-height: 1.8; margin: 16px 0; }
+
+    /* =============== Footer =============== */
+    footer {
+      margin-top: auto;
+      padding: 28px 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* === 防止横向滚动 === */
+    html, body {
+      overflow-x: hidden;          /* 彻底关掉水平滚动条 */
+      max-width: 100vw;            /* 抑制超宽元素撑出视口 */
+      touch-action: pan-y;         /* 仅允许垂直手势，提升滚动流畅度 */
+    }
+
+    /* 修正极少数 transform‑scale/absolute 元素可能撑宽的问题 */
+    *:where(div, section, header, footer) {
+      max-width: 100%;
+    }
+
+    /* === Carousel 样式=== */
+    .carousel {
+      position: relative;
+      width: 90%;                     /* 留点左右留白 */
+      max-width: 960px;               /* 桌面端上限 */
+      height: clamp(220px, 56vw, 540px);  /* 小屏 220px，随宽度增长，但不超 540px */
+      margin: 60px auto;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    }
+
+    .carousel-track {
+      display: flex;
+      height: 100%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .carousel-track img {
+      flex: 0 0 100%;
+      height: 100%;
+      width: 100%;
+      object-fit: contain;            /* 保证整张完整可见 */
+      scroll-snap-align: center;
+      user-select: none;
+    }
+
+    .carousel-track::-webkit-scrollbar { display: none; } /* 隐藏滚动条 */
+
+    /* 导航按钮（可选） */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,.45);
+      border: none;
+      color: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 1.6rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    .carousel-btn:hover { background: rgba(0,0,0,.6); }
+    .carousel-btn.prev { left: 12px; }
+    .carousel-btn.next { right: 12px; }
+
+    /* 手机端适配 */
+    @media (max-width: 768px) {
+      .carousel {
+        width: 100vw;                    /* 占满整个视口宽度 */
+        max-width: none;                 /* 移除最大宽度限制 */
+        margin-left: 50%;                /* 水平居中 */
+        transform: translateX(-50%);     /* 补偿偏移，实现居中 */
+        padding: 0;                      /* 移除默认 padding */
+        border-radius: 0;                /* 可选：移动端去掉圆角更简洁 */
+        box-shadow: none;                /* 可选：去掉阴影提升性能 */
+      }
+      .carousel-btn { width: 32px; height: 32px; font-size: 1.3rem; }
+      .carousel-track img {
+        object-fit: contain;               /* 图片撑满容器，保持比例 */
+      }
+    }
+
+    /* =============== 手机端适配 =============== */
+    @media (max-width: 640px) {
+      .hero { padding: 100px 16px 80px; }
+      .hero p { margin-bottom: 28px; }
+      .hero button { width: 100%; }
+
+      .features { grid-template-columns: 1fr; padding: 60px 16px; }
+      .feature-card { padding: 26px 20px; }
+
+      .overview { margin: 50px 16px 80px; padding: 40px 26px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 主题切换按钮 -->
+  <div class="theme-toggle">
+    <div class="theme-btn" id="lightBtn">☀️</div>
+    <div class="theme-btn" id="darkBtn">🌙</div>
+    <div class="theme-btn" id="blueBtn">🌊</div>
+    <div class="theme-btn" id="greenBtn">🍃</div>
+    <div class="theme-btn" id="purpleBtn">🍇</div>
+  </div>
+
+  <!-- Hero -->
+  <header class="hero">
+    <h1>Tongji‑Electcourse2</h1>
+    <p>专为同济学子设计的可视化辅助选课工具，支持自动登录、循环重试与多线程并发，让选课更高效。</p>
+    <div class="button-group">
+    <button onclick="window.location.href='https://github.com/boatchanting/Tongji-electcourse2/releases/ '">下载链接</button>
+    <button onclick="window.location.href='https://gh-proxy.com/github.com/boatchanting/Tongji-electcourse2/releases/download/Tongji-Electcourse2-v1.1.1/Tongji-electcourse2-v1.1.1.exe'">镜像下载</button></div>
+    <strong>注：部分电脑上首次运行需初始化webdriver，需要第二次运行方可打开，属于正常现象</strong>
+  </header>
+
+  <!-- 图片轮播 Carousel -->
+  <section class="carousel" aria-label="软件界面滚动预览">
+    <div class="carousel-track">
+      <img src="img/p1.png" alt="软件界面示例 1">
+      <img src="img/p2.png" alt="软件界面示例 2">
+      <img src="img/p3.png" alt="软件界面示例 3">
+      <img src="img/p4.png" alt="软件界面示例 4">
+      <img src="img/p5.png" alt="软件界面示例 5">
+      <img src="img/p6.png" alt="软件界面示例 5">
+    </div>
+
+    <!-- 如果想要手动导航按钮，可以保留 ↓，不需要就删掉 -->
+    <button class="carousel-btn prev" aria-label="上一张">‹</button>
+    <button class="carousel-btn next" aria-label="下一张">›</button>
+  </section>
+
+
+  <!-- 功能亮点 -->
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon">⚙️</div>
+      <div class="feature-title">自动登录</div>
+      <div class="feature-desc">一次输入学号密码，全流程自动登录选课系统。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <div class="feature-title">自动刷新</div>
+      <div class="feature-desc">选课过程中，自动刷新课程列表，确保最新状态。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">实时日志</div>
+      <div class="feature-desc">实时记录任务状态，每一步操作尽在掌握。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚀</div>
+      <div class="feature-title">多进程并发</div>
+      <div class="feature-desc">不同课程独立进程并行运行，大幅提升选课概率。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <div class="feature-title">主题切换</div>
+      <div class="feature-desc">内置多款配色方案，随心切换，夜间模式护眼舒适。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <div class="feature-title">隐私安全</div>
+      <div class="feature-desc">源代码本地运行，无任何信息上传，保证数据安全。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💾</div>
+      <div class="feature-title">绿色运行</div>
+      <div class="feature-desc">解压后双击运行，免安装，不写入注册表，不产生临时文件，无软件残留。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🏫</div>
+      <div class="feature-title">多校适配</div>
+      <div class="feature-desc">仅通过更改项目源代码中的auto_elect_course函数即可适配其他学校选课系统，扩展方便</div>
+    </div>
+  </section>
+
+  <!-- 软件概述 -->
+  <section class="overview">
+    <h2>为什么选择 Tongji‑Electcourse2？</h2>
+    <p>官方选课系统在高峰期常出现延迟甚至崩溃，热门课程分秒必争。传统手动刷新方式效率低且令人身心俱疲。</p>
+    <p>Tongji‑Electcourse2 结合自动化脚本与可视化界面，支持批量管理课程与智能循环重试，并通过日志实时反馈执行进度，帮助你轻松、透明地掌控选课进程。</p>
+  </section>
+  
+  <!-- Footer -->
+  <footer>
+    开源地址：<a href="https://github.com/boatchanting/Tongji-Electcourse2" target="_blank">GitHub</a> · 反馈：<a href="https://github.com/boatchanting/Tongji-Electcourse2/issues" target="_blank">Issues</a>
+  </footer>
+
+  <!-- 主题切换 -->
+  <script src="scripts/theme.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const track   = document.querySelector('.carousel-track');
+  const slides  = track.querySelectorAll('img');
+  const prevBtn = document.querySelector('.carousel-btn.prev');
+  const nextBtn = document.querySelector('.carousel-btn.next');
+
+  let index = 0;                                   // 当前页指针
+  const slideWidth = () => track.clientWidth;      // 每次实时取，适配响应式
+
+  /* —— 滚动到指定索引（环形） —— */
+  function go(delta) {
+    index = (index + delta + slides.length) % slides.length;
+    track.scrollTo({ left: index * slideWidth(), behavior: 'smooth' });
+  }
+
+  /* 手动按钮 */
+  prevBtn?.addEventListener('click', () => go(-1));
+  nextBtn?.addEventListener('click', () => go( 1));
+
+  /* 自动轮播（5 s） */
+  let timer = setInterval(() => go(1), 5000);
+
+  /* 用户按住/滑动时暂停，放开继续 */
+  track.addEventListener('pointerdown', () => clearInterval(timer));
+  track.addEventListener('pointerup',   () => timer = setInterval(() => go(1), 5000));
+
+  /* 处理窗口大小变化防止错位 */
+  window.addEventListener('resize', () => track.scrollLeft = index * slideWidth());
+});
+</script>
+
+</body>
+</html>
